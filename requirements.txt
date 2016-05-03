@@ -3,7 +3,7 @@ mozinfo==0.8
 treeherder-client==2.0.1
 
 # Required by treeherder-client
-mohawk==0.3.0
+mohawk==0.3.2.1
 requests==2.9.1
 requests-hawk==1.0.0
 six==1.10.0
