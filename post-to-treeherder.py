@@ -27,13 +27,8 @@ JOB_FRAGMENT = '/#/jobs?repo={repository}&revision={revision}'
 
 BUILD_STATES = ['running', 'completed']
 
-RESULT_MARKER = 'visuallyLoaded'
-ONE_DAY_MS = 86400000
 
-COLD_LAUNCH = 'cold-launch'
-
-
-class RaptorResultParser(object):
+class TestResultParser(object):
 
     BUSTED = 'busted'
     SUCCESS = 'success'
@@ -44,7 +39,6 @@ class RaptorResultParser(object):
         self.retval = retval
         self.log_file = log_file
         self.failure_re = re.compile(r'Aborted due to error')
-        self.results_re = re.compile(r'^\| %s        \| \d' % RESULT_MARKER)
         self.threshold = float(threshold)
         self.failures = []
         self.result_line = []
@@ -56,7 +50,7 @@ class RaptorResultParser(object):
             print('Test was reported as busted (--test-failure)')
             return
 
-        # search the console log for raptor aborted error, if errors, mark as busted
+        # search the console log for aborted error, if errors, mark as busted
         try:
             with open(self.log_file, 'r') as f:
                 for line in f.readlines():
@@ -69,7 +63,7 @@ class RaptorResultParser(object):
         if self.retval == 1 or self.failures:
             return
 
-        # raptor not aborted, so check actual raptor result value i.e. visuallyLoaded stat
+        # test suite not aborted, so check actual test result
         try:
             with open(self.log_file, 'r') as f:
                 for line in f.readlines():
@@ -130,15 +124,10 @@ class RaptorResultParser(object):
 
 class Submission(object):
 
-    def __init__(self, repository, settings, app_name, test_type, start_time, finish_time, 
+    def __init__(self, repository, revision, settings, start_time, finish_time, 
                  test_busted, treeherder_url=None, treeherder_client_id=None, treeherder_secret=None):
-
         self.repository = repository
-        self.revision = utils.getGeckoFromFile()
-        self.device = (os.environ['DEVICE_TYPE']).strip().lower()
-        self.memory = (os.environ['MEMORY']).strip()
-        self.app_name = app_name
-        self.test_type = test_type
+        self.revision = revision
         self.start_time = start_time
         self.finish_time = finish_time
         self.test_busted = test_busted
@@ -153,12 +142,8 @@ class Submission(object):
         if not self.client_id or not self.secret:
             raise ValueError('The client_id and secret for Treeherder must be set.')
 
-        # if app name includes entrypoint we don't need it, strip it out
-        has_entrypoint = self.app_name.find('@')
-        if (has_entrypoint != -1):
-            self.app_name = self.app_name[has_entrypoint + 1:]
-
-    def _get_treeherder_platform(self):
+    def get_treeherder_platform(self):
+        print('HI')
         platform = None
 
         info = mozinfo.info
@@ -183,14 +168,15 @@ class Submission(object):
 
         job.add_job_guid(guid)
 
-        job.add_product_name('raptor')
+        job.add_product_name('mozreview')
 
         job.add_project(self.repository)
-        job.add_revision_hash(self.retrieve_revision_hash())
+        #job.add_revision_hash(self.retrieve_revision_hash())
 
         # Add platform and build information
         job.add_machine(socket.getfqdn())
-        platform = ("", "B2G Raptor %s %s" % (self.device, self.memory), "")
+        platform = self.get_treeherder_platform()
+
         job.add_machine_info(*platform)
         job.add_build_info(*platform)
 
@@ -202,11 +188,8 @@ class Submission(object):
         job.add_group_symbol(self.settings['treeherder']['group_symbol'].format(**kwargs))
 
         # Bug 1174973 - for now we need unique job names even in different groups
-        job.add_job_name(self.settings['treeherder']['job_name'].format(**kwargs) + ' (' + self.app_name + ')')
-        if self.test_type == COLD_LAUNCH:
-            job.add_job_symbol(self.settings['treeherder']['job_symbol'][self.app_name].format(**kwargs))
-        else:
-            job.add_job_symbol(self.settings['treeherder']['job_symbol'].format(**kwargs))
+        job.add_job_name(self.settings['treeherder']['job_name'].format(**kwargs))
+        job.add_job_symbol(self.settings['treeherder']['job_symbol'].format(**kwargs))
 
         # request time will be the jenkins TEST_TIME i.e. when jenkins job started
         job.add_submit_timestamp(int(os.environ['TEST_TIME']))
@@ -251,57 +234,26 @@ class Submission(object):
         print('Sending results to Treeherder: {}'.format(job_collection.to_json()))
         url = urlparse(self.url)
        
-        client = TreeherderClient(protocol=url.scheme, host=url.hostname,
-                                  client_id=self.client_id, secret=self.secret)
-        client.post_collection(self.repository, job_collection)
+        #client = TreeherderClient(protocol=url.scheme, host=url.hostname,
+        #                          client_id=self.client_id, secret=self.secret)
+        #client.post_collection(self.repository, job_collection)
 
-        print('Results are available to view at: {}'.format(
-            urljoin(self.url,
-                    JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
+        #print('Results are available to view at: {}'.format(
+        #    urljoin(self.url,
+        #            JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
 
     def submit_running_job(self, job):
         job.add_state('running')
         self.submit(job)
 
-    def get_threshold(self):
-        # get the acceptable maximum value for the corresponding test, & device (including memory)
-        if self.test_type == COLD_LAUNCH:
-            return self.settings['thresholds'][self.device][self.memory][self.app_name]
-        else:
-            return self.settings['thresholds'][self.device][self.memory]['homescreen']
-
-    def build_dashboard_url(self):
-        # build raptor dashboard url for given device, branch, memory etc.
-        # i.e. https://raptor.mozilla.org/dashboard/script/measures?var-device=flame-kk&var-memory=512&var-branch=master
-            # &var-test=cold-launch&from=1448122404897&to=1448381604897&var-metric=All&var-aggregate=95%25%20Bound&panelId=3&fullscreen
-
-        dash_pre = "https://raptor.mozilla.org/dashboard/script/measures?"
-        dash_dev = "var-device=%s" % self.device.lower()
-        dash_mem = "&var-memory=%s" % self.memory
-        dash_branch = "&var-branch=master"
-        dash_test = "&var-test=%s" % self.test_type
-
-        test_time =  int(os.environ['TEST_TIME'])
-        from_time = test_time - (ONE_DAY_MS * 2)
-        to_time = test_time + (ONE_DAY_MS * 2)
-        dash_from = "&from=%d" % from_time
-        dash_to = "&to=%d" % to_time
-
-        dash_metric = "&var-metric=All"
-        dash_agg = "&var-aggretate=95%25%20Bound"
-
-        if self.test_type == COLD_LAUNCH:
-            dash_panel = "&panelId=%s&fullscreen" % self.settings['panel-ids'][self.app_name]
-        else:
-            dash_panel = "&panelId=%s&fullscreen" % self.settings['panel-ids']['homescreen']
-
+    def build_results_url(self):
         if (self.test_busted == False):
-            dashboard_url = dash_pre + dash_dev + dash_mem + dash_branch + dash_test + dash_from + dash_to + dash_metric + dash_agg + dash_panel
+            results_url = "link to test results here"
         else:
-            dashboard_url = 'Test is busted, see Jenkins'
+            results_url = 'Test is busted, see Jenkins'
 
-        print('Raptor dashboard: %s' % dashboard_url)
-        return dashboard_url
+        print('Link to results: %s' % results_url)
+        return results_url
 
     def submit_completed_job(self, job, retval):
         """Update the status of a job to completed.
@@ -310,12 +262,7 @@ class Submission(object):
         self.threshold = self.get_threshold()
 
         # Parse results log
-        if self.test_type == COLD_LAUNCH:
-            parser = RaptorResultParser(retval, self.settings['logs'][self.app_name].format(**kwargs), 
-                self.threshold)
-        else:
-            parser = RaptorResultParser(retval, self.settings['logs']['reboot'].format(**kwargs), 
-                self.threshold)
+        parser = TestResultParser(retval, self.settings['logs']['results'].format(**kwargs), self.threshold)
 
         job.add_result(parser.status)
 
@@ -328,13 +275,13 @@ class Submission(object):
                 'url': os.environ['BUILD_URL']
             })
 
-        # Add link to raptor dashboard showing the results
-        dashboard_url = self.build_dashboard_url()
+        # Add link to results
+        results_url = self.build_results_url()
         self._job_details.append({
-            'title': 'Raptor dashboard',
-            'value': dashboard_url,
+            'title': 'Results link',
+            'value': results_url,
             'content_type': 'link',
-            'url': dashboard_url
+            'url': results_url
         })
 
         job.add_state('completed')
@@ -344,13 +291,6 @@ class Submission(object):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--app-name',
-                        required=False,
-                        help='The app name i.e. "clock"')
-    parser.add_argument('--test-type',
-                        choices=config['test_types'].keys(),
-                        required=True,
-                        help='The name of the Raptor test for building the job name.')
     parser.add_argument('--start-time',
                         required=True,
                         help='The time (epoch) that the test started at.')
@@ -361,6 +301,9 @@ def parse_args():
     parser.add_argument('--repository',
                         required=True,
                         help='The repository name the build was created from.')
+    parser.add_argument('--revision',
+                        required=True,
+                        help='Revision of the build that is being tested.')
     parser.add_argument('--build-state',
                         choices=BUILD_STATES,
                         required=True,
@@ -395,27 +338,18 @@ if __name__ == '__main__':
     print('Raptor Treeherder Submission Script Version %s' % config['version'])
     kwargs = parse_args()
 
-    # app-name required if test-type is coldlaunch
-    if kwargs['test_type'] == COLD_LAUNCH:
-        if not kwargs['app_name']:
-            print('--app-name argument required when --test-type=cold-launch')
-            exit(1)
-
     # Can only be imported after the environment has been activated
     import mozinfo
     import requests
 
     from thclient import TreeherderClient, TreeherderJob, TreeherderJobCollection
 
-    settings = config['test_types'][kwargs['test_type']]
-
     th = Submission(kwargs['repository'],
                     treeherder_url=kwargs['treeherder_url'],
                     treeherder_client_id=kwargs['treeherder_client_id'],
                     treeherder_secret=kwargs['treeherder_secret'],
-                    settings=settings,
-                    app_name=kwargs['app_name'],
-                    test_type=kwargs['test_type'],
+                    revision=kwargs['revision'][:12],
+                    settings=config,
                     start_time=kwargs['start_time'],
                     finish_time=kwargs['finish_time'],
                     test_busted=kwargs['test_failure'])
