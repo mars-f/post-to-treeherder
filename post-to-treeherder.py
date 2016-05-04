@@ -170,7 +170,6 @@ class Submission(object):
         job.add_product_name('mozreview')
 
         job.add_project(self.repository)
-        job.add_revision(self.revision)
         job.add_revision_hash(self.retrieve_revision_hash())
 
         # Add platform and build information
