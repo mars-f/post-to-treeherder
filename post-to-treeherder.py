@@ -13,6 +13,7 @@ import re
 import socket
 from urlparse import urljoin, urlparse
 import uuid
+import json
 
 from config import config
 from lib import utils
@@ -35,11 +36,9 @@ class TestResultParser(object):
     TESTFAILED = 'testfailed'
     UNKNOWN = 'unknown'
 
-    def __init__(self, retval, log_file, threshold):
+    def __init__(self, retval, log_file):
         self.retval = retval
         self.log_file = log_file
-        self.failure_re = re.compile(r'Aborted due to error')
-        self.threshold = float(threshold)
         self.failures = []
         self.result_line = []
         self.parse_results()
@@ -47,61 +46,36 @@ class TestResultParser(object):
     def parse_results(self):
         # if already failed (busted) no point in looking for logs
         if self.retval == 1:
-            print('Test was reported as busted (--test-failure)')
+            print('Test was reported as busted (--test-busted)')
             return
 
-        # search the console log for aborted error, if errors, mark as busted
+        # ensure results file exists, parse it
         try:
-            with open(self.log_file, 'r') as f:
-                for line in f.readlines():
-                    if self.failure_re.search(line):
-                        self.failures.append(line)
+            with open(self.log_file, 'r') as results_file:
+                results_data = results_file.read()
+                # get rid of 'testreport =' at top of file as not valid json
+                if results_data[:12] == 'testreport =':
+                    results_data = results_data[12:]
+                results_json = json.loads(results_data)
+
         except IOError:
-            print('Cannot look for failures due to missing log file: {}'.format(self.log_file))
+            print('Test busted, missing log file: {}'.format(self.log_file))
+            self.retval = 1
+
+        except ValueError:
+            print('Test busted, unable to parse log file: {}'.format(self.log_file))
             self.retval = 1
 
         if self.retval == 1 or self.failures:
             return
 
-        # test suite not aborted, so check actual test result
-        try:
-            with open(self.log_file, 'r') as f:
-                for line in f.readlines():
-                    if self.results_re.match(line):
-                        self.result_line.append(line)
-
-        except IOError:
-            print('Raptor "visuallyLoaded" results not found in log file: {}'.format(self.log_file))
-            self.retval = 1
-
-        if not self.result_line or len(self.result_line) > 1: 
-            self.retval = 1
-        else:
-            print('Found result line for %s:' % RESULT_MARKER)
-            print self.result_line
-            x = self.result_line[0].split('|')
-
-            if len(x) != 9:
-                print("Unable to find a '95% Bound' value for " + RESULT_MARKER)
-                self.retval = 1
-            else:
-                # want value in '95% Bound' column which is the last value in the row
-                result = float(x[7].strip())
-                print('%s: %.2f' % (RESULT_MARKER, result))
-                print('Acceptable max: %.2f' % self.threshold)
-
-                # compare with provided acceptable threshold
-                if result <= self.threshold:
-                    print('Result: PASS')
-                else:
-                    print('Result: FAIL')
-                    self.failures.append('Coldlaunch result exceeds the allowed threshold')
+        # results file found and parsed, so now check the actual results themselves
+        print("******* TODO: parse results_json now")
 
     @property
     def status(self):
         status = self.UNKNOWN
 
-        # retval.txt was not written - so most likely an abort
         if self.retval is None or (self.retval and not self.failures):
             status = self.BUSTED
 
@@ -130,9 +104,8 @@ class Submission(object):
         self.revision = revision
         self.start_time = start_time
         self.finish_time = finish_time
-        self.test_busted = test_busted
         self.settings = settings
-
+        self.test_busted = int(test_busted) if test_busted != None else 0
         self._job_details = []
 
         self.url = treeherder_url
@@ -233,23 +206,23 @@ class Submission(object):
         print('Sending results to Treeherder: {}'.format(job_collection.to_json()))
         url = urlparse(self.url)
        
-        client = TreeherderClient(protocol=url.scheme, host=url.hostname,
-                                  client_id=self.client_id, secret=self.secret)
-        client.post_collection(self.repository, job_collection)
+        #client = TreeherderClient(protocol=url.scheme, host=url.hostname,
+        #                          client_id=self.client_id, secret=self.secret)
+        #client.post_collection(self.repository, job_collection)
 
-        print('Results are available to view at: {}'.format(
-            urljoin(self.url,
-                    JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
+        #print('Results are available to view at: {}'.format(
+        #    urljoin(self.url,
+        #            JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
 
     def submit_running_job(self, job):
         job.add_state('running')
         self.submit(job)
 
-    def build_results_url(self):
-        if (self.test_busted == False):
-            results_url = "link to test results here"
+    def build_results_url(self, parser_retval):
+        if self.test_busted == 0 and parser_retval == 0:
+            results_url = 'Make link to test results here'
         else:
-            results_url = 'Test is busted, see Jenkins'
+            results_url = "Test busted! See Jenkins buid log!"
 
         print('Link to results: %s' % results_url)
         return results_url
@@ -257,27 +230,22 @@ class Submission(object):
     def submit_completed_job(self, job, retval):
         """Update the status of a job to completed.
         """
-        # Retrieve acceptable threshold
-        # self.threshold = self.get_threshold()
 
         # Parse results log
-        # parser = TestResultParser(retval, self.settings['logs']['results'].format(**kwargs), self.threshold)
-
-        # temp just make it success until results parser is ready
-        #job.add_result(parser.status)
-        job.add_result('success')
+        parser = TestResultParser(retval, self.settings['logs']['results'].format(**kwargs))
+        job.add_result(parser.status)
 
         # If the Jenkins BUILD_URL environment variable is present add it as artifact
         if os.environ.get('BUILD_URL'):
             self._job_details.append({
-                'title': 'Inspect Jenkins Build (VPN required)',
+                'title': 'Inspect Jenkins Build',
                 'value': os.environ['BUILD_URL'],
                 'content_type': 'link',
                 'url': os.environ['BUILD_URL']
             })
 
         # Add link to results
-        results_url = self.build_results_url()
+        results_url = self.build_results_url(parser.retval)
         self._job_details.append({
             'title': 'Results link',
             'value': results_url,
@@ -297,7 +265,7 @@ def parse_args():
                         help='The time (epoch) that the test started at.')
     parser.add_argument('--finish-time',
                         help='The time (epoch) that the test finished at.')
-    parser.add_argument('--test-failure',
+    parser.add_argument('--test-busted',
                         help='(Bool) Set to 1 if the test failed to run on Jenkins (busted).')
     parser.add_argument('--repository',
                         required=True,
@@ -353,7 +321,7 @@ if __name__ == '__main__':
                     settings=config,
                     start_time=kwargs['start_time'],
                     finish_time=kwargs['finish_time'],
-                    test_busted=kwargs['test_failure'])
+                    test_busted=kwargs['test_busted'])
 
     # State 'running'
     if kwargs['build_state'] == BUILD_STATES[0]:
@@ -372,10 +340,10 @@ if __name__ == '__main__':
         except:
             job_guid = str(uuid.uuid4())
 
-        # return value from jenkins test (--test-failure) indicates if busted
+        # return value from jenkins test (--test-busted) indicates if busted
         retval = 0
-        if kwargs['test_failure'] != None:
-            if int(kwargs['test_failure']) != 0:
+        if kwargs['test_busted'] != None:
+            if int(kwargs['test_busted']) != 0:
                 retval = 1
 
         job = th.create_job(job_guid, **kwargs)
