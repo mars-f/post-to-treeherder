@@ -70,7 +70,32 @@ class TestResultParser(object):
             return
 
         # results file found and parsed, so now check the actual results themselves
-        print("******* TODO: parse results_json now")
+        print("************")
+        passed = 0
+        failed = 0
+        skipped = 0
+        total = 0
+        other = 0
+
+        for test_result in results_json:
+            total += 1
+            result = results_json[test_result]['result']
+            if result == 'success':
+                passed += 1
+            elif result == 'failure':
+                failed += 1
+                self.failures.append(test_result)
+            elif result == 'skip':
+                skipped += 1
+            else:
+                other += 1
+
+        if other != 0:
+            print('Test busted, found a test result other than passed, failed, or skipped')
+            self.retval = 1
+            return
+
+        print("Total: %s, Pass: %s, Failed: %s, Skip: %s" %(total, passed, failed, skipped))
 
     @property
     def status(self):
@@ -210,13 +235,13 @@ class Submission(object):
         print('Sending results to Treeherder: {}'.format(job_collection.to_json()))
         url = urlparse(self.url)
        
-        client = TreeherderClient(protocol=url.scheme, host=url.hostname,
-                                  client_id=self.client_id, secret=self.secret)
-        client.post_collection(self.repository, job_collection)
+        #client = TreeherderClient(protocol=url.scheme, host=url.hostname,
+        #                          client_id=self.client_id, secret=self.secret)
+        #client.post_collection(self.repository, job_collection)
 
-        print('Results are available to view at: {}'.format(
-            urljoin(self.url,
-                    JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
+        #print('Results are available to view at: {}'.format(
+        #    urljoin(self.url,
+        #            JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
 
     def submit_running_job(self, job):
         job.add_state('running')
