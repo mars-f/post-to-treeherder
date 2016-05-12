@@ -69,8 +69,7 @@ class TestResultParser(object):
         if self.retval == 1 or self.failures:
             return
 
-        # results file found and parsed, so now check the actual results themselves
-        print("************")
+        # check the actual results themselves
         passed = 0
         failed = 0
         skipped = 0
@@ -131,7 +130,7 @@ class Submission(object):
         self.finish_time = finish_time
         self.settings = settings
         self._job_details = []
-
+        self.log_file = self.settings['logs']['results'].format(**kwargs)
         self.url = treeherder_url
         self.client_id = treeherder_client_id
         self.secret = treeherder_secret
@@ -235,25 +234,25 @@ class Submission(object):
         print('Sending results to Treeherder: {}'.format(job_collection.to_json()))
         url = urlparse(self.url)
        
-        #client = TreeherderClient(protocol=url.scheme, host=url.hostname,
-        #                          client_id=self.client_id, secret=self.secret)
-        #client.post_collection(self.repository, job_collection)
+        client = TreeherderClient(protocol=url.scheme, host=url.hostname,
+                                  client_id=self.client_id, secret=self.secret)
+        client.post_collection(self.repository, job_collection)
 
-        #print('Results are available to view at: {}'.format(
-        #    urljoin(self.url,
-        #            JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
+        print('Results are available to view at: {}'.format(
+            urljoin(self.url,
+                    JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
 
     def submit_running_job(self, job):
         job.add_state('running')
         self.submit(job)
 
     def build_results_url(self, parser_retval):
-        if self.test_busted == 0 and parser_retval == 0:
-            results_url = 'Make link to test results here'
+        if os.environ.get('BUILD_URL'):
+            results_url =  os.environ.get('BUILD_URL') + 'artifact/' + self.settings['logs']['name']
         else:
-            results_url = "Test busted! See Jenkins buid log!"
+            reslts_url = "N/A"
+        print("Results url: %s" %results_url)
 
-        print('Link to results: %s' % results_url)
         return results_url
 
     def submit_completed_job(self, job, retval):

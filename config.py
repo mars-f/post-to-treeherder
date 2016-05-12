@@ -5,6 +5,7 @@
 import os
 
 here = os.path.dirname(os.path.abspath(__file__))
+file_name = 'report.json'
 
 config = {
     'version': '1.0.0',
@@ -15,6 +16,7 @@ config = {
         'job_symbol': 'rb'
     },
     'logs': {
-        'results': os.path.join(here, 'report.json')
+        'name': file_name,
+        'results': os.path.join(here, file_name)
     },
 }
