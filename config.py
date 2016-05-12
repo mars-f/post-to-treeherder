@@ -10,8 +10,8 @@ file_name = 'report.json'
 config = {
     'version': '1.0.0',
     'treeherder': {
-        'group_name': 'MozReview',
-        'group_symbol': 'MR',
+        'group_name': 'version-control-tools',
+        'group_symbol': 'VCT',
         'job_name': 'reviewboard',
         'job_symbol': 'rb'
     },
