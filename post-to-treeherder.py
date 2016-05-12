@@ -210,13 +210,13 @@ class Submission(object):
         print('Sending results to Treeherder: {}'.format(job_collection.to_json()))
         url = urlparse(self.url)
        
-        #client = TreeherderClient(protocol=url.scheme, host=url.hostname,
-        #                          client_id=self.client_id, secret=self.secret)
-        #client.post_collection(self.repository, job_collection)
+        client = TreeherderClient(protocol=url.scheme, host=url.hostname,
+                                  client_id=self.client_id, secret=self.secret)
+        client.post_collection(self.repository, job_collection)
 
-        #print('Results are available to view at: {}'.format(
-        #    urljoin(self.url,
-        #            JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
+        print('Results are available to view at: {}'.format(
+            urljoin(self.url,
+                    JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
 
     def submit_running_job(self, job):
         job.add_state('running')
