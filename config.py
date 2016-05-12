@@ -10,9 +10,9 @@ config = {
     'version': '1.0.0',
     'treeherder': {
         'group_name': 'MozReview',
-        'group_symbol': 'MozReview',
+        'group_symbol': 'MR',
         'job_name': 'reviewboard',
-        'job_symbol': 'RB'
+        'job_symbol': 'rb'
     },
     'logs': {
         'results': os.path.join(here, 'report.json')
