@@ -99,18 +99,22 @@ class TestResultParser(object):
 class Submission(object):
 
     def __init__(self, repository, revision, settings, start_time, finish_time, 
-                 test_busted, treeherder_url=None, treeherder_client_id=None, treeherder_secret=None):
+                 test_busted=0, treeherder_url=None, treeherder_client_id=None, treeherder_secret=None):
         self.repository = repository
         self.revision = revision
         self.start_time = start_time
         self.finish_time = finish_time
         self.settings = settings
-        self.test_busted = int(test_busted) if test_busted != None else 0
         self._job_details = []
 
         self.url = treeherder_url
         self.client_id = treeherder_client_id
         self.secret = treeherder_secret
+
+        if test_busted == '0' or test_busted == '1':
+            self.test_busted = int(test_busted)
+        else:
+            self.test_busted = 0
 
         if not self.client_id or not self.secret:
             raise ValueError('The client_id and secret for Treeherder must be set.')
