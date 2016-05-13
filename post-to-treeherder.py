@@ -234,28 +234,19 @@ class Submission(object):
         print('Sending results to Treeherder: {}'.format(job_collection.to_json()))
         url = urlparse(self.url)
        
-        client = TreeherderClient(protocol=url.scheme, host=url.hostname,
-                                  client_id=self.client_id, secret=self.secret)
-        client.post_collection(self.repository, job_collection)
+        #client = TreeherderClient(protocol=url.scheme, host=url.hostname,
+        #                          client_id=self.client_id, secret=self.secret)
+        #client.post_collection(self.repository, job_collection)
 
-        print('Results are available to view at: {}'.format(
-            urljoin(self.url,
-                    JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
+        #print('Results are available to view at: {}'.format(
+        #    urljoin(self.url,
+        #            JOB_FRAGMENT.format(repository=self.repository, revision=self.revision))))
 
     def submit_running_job(self, job):
         job.add_state('running')
         self.submit(job)
 
-    def build_results_url(self, parser_retval):
-        if os.environ.get('BUILD_URL'):
-            results_url =  os.environ.get('BUILD_URL') + 'artifact/' + self.settings['logs']['name']
-        else:
-            reslts_url = "N/A"
-        print("Results url: %s" %results_url)
-
-        return results_url
-
-    def submit_completed_job(self, job, retval):
+    def submit_completed_job(self, job, retval, uploaded_logs):
         """Update the status of a job to completed.
         """
 
@@ -272,19 +263,49 @@ class Submission(object):
                 'url': os.environ['BUILD_URL']
             })
 
-        # Add link to results
-        results_url = self.build_results_url(parser.retval)
-        self._job_details.append({
-            'title': 'Results link',
-            'value': results_url,
-            'content_type': 'link',
-            'url': results_url
-        })
+        # Add all uploaded logs as artifacts
+        for log in uploaded_logs:
+            self._job_details.append({
+                'title': log,
+                'value': uploaded_logs[log]['url'],
+                'content_type': 'link',
+                'url': uploaded_logs[log]['url'],
+            })
 
         job.add_state('completed')
         job.add_end_timestamp(int(self.finish_time))
 
         self.submit(job)
+
+
+def upload_log_files(guid, logs,
+                     bucket_name=None, access_key_id=None, access_secret_key=None):
+    # Upload all specified logs to Amazon S3
+
+    if not bucket_name:
+        print('No AWS Bucket name specified - skipping upload of artifacts.')
+        return {}
+
+    s3_bucket = S3Bucket(bucket_name, access_key_id=access_key_id,
+                         access_secret_key=access_secret_key)
+    uploaded_logs = {}
+
+    for log in logs:
+        try:
+            if os.path.isfile(logs[log]):
+                print("found file")
+                remote_path = '{dir}/{filename}'.format(dir=str(guid),
+                                                        filename=os.path.basename(log))
+                url = s3_bucket.upload(logs[log], remote_path)
+
+                uploaded_logs.update({log: {'path': logs[log], 'url': url}})
+                print('Uploaded {path} to {url}'.format(path=logs[log], url=url))
+
+        except Exception:
+            print('Failure uploading "{path}" to S3'.format(path=logs[log]))
+
+    return uploaded_logs
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -322,23 +343,24 @@ def parse_args():
                                   default=os.environ.get('TREEHERDER_URL'),
                                   help='URL to the Treeherder server.')
     treeherder_group.add_argument('--treeherder-client-id',
-                                  default=os.environ.get('RAPTOR_TREEHERDER_CLIENT_ID'),
+                                  default=os.environ.get('MOZREVIEW_TREEHERDER_CLIENT_ID'),
                                   help='Client ID for submission to Treeherder.')
     treeherder_group.add_argument('--treeherder-secret',
-                                  default=os.environ.get('RAPTOR_TREEHERDER_SECRET'),
+                                  default=os.environ.get('MOZREVIEW_TREEHERDER_SECRET'),
                                   help='Secret for submission to Treeherder.')
 
     return vars(parser.parse_args())
 
 
 if __name__ == '__main__':
-    print('Raptor Treeherder Submission Script Version %s' % config['version'])
+    print('Treeherder Submission Script Version %s' % config['version'])
     kwargs = parse_args()
 
     # Can only be imported after the environment has been activated
     import mozinfo
     import requests
 
+    from lib.s3 import S3Bucket
     from thclient import TreeherderClient, TreeherderJob, TreeherderJobCollection
 
     th = Submission(kwargs['repository'],
@@ -375,5 +397,8 @@ if __name__ == '__main__':
                 retval = 1
 
         job = th.create_job(job_guid, **kwargs)
+        uploaded_logs = upload_log_files(job.data['job']['job_guid'],
+                                         config['treeherder']['artifacts'],
+                                         bucket_name=kwargs.get('aws_bucket'))
 
-        th.submit_completed_job(job, retval)
+        th.submit_completed_job(job, retval, uploaded_logs=uploaded_logs)
