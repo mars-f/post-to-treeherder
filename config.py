@@ -10,11 +10,11 @@ file_name = 'report.json'
 config = {
     'version': '2.0.0',
     'treeherder': {
-        'group_name': 'mozreview',
+        'group_name': 'MozReview',
         'group_symbol': 'MR',
         'job_name': 'reviewboard',
         'job_symbol': 'rb',
-        'artifacts': ['report.json', 'results.xml']
+        'artifacts': ['report.json', 'results.xml', '*.err']
     },
     'logs': {
         'results': os.path.join(here, file_name)
