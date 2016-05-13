@@ -302,12 +302,17 @@ def upload_log_files(guid, logs,
                 print("found file")
                 remote_path = '{dir}/{filename}'.format(dir=str(guid),
                                                         filename=os.path.basename(log))
+                print('reote_path:')
+                print(remote_path)
                 url = s3_bucket.upload(logs[log], remote_path)
+                print("url:")
+                print(url)
 
                 uploaded_logs.update({log: {'path': logs[log], 'url': url}})
                 print('Uploaded {path} to {url}'.format(path=logs[log], url=url))
 
         except Exception:
+            print(Exception)
             print('Failure uploading "{path}" to S3'.format(path=logs[log]))
 
     return uploaded_logs

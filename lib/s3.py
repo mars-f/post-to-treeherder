@@ -97,9 +97,15 @@ class S3Bucket(object):
 
             url = key.generate_url(expires_in=0,
                                    query_auth=False)
+            print('url')
+            print(url)
+
         except boto.exception.S3ResponseError, e:
             logger.exception(str(e))
             raise S3Error('%s' % e)
+
+        except:
+          print("ERROR")
 
         print('File %s uploaded to: %s' % (path, url))
         return url
