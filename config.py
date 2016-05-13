@@ -14,8 +14,8 @@ config = {
         'job_name': 'reviewboard',
         'job_symbol': 'rb',
         'artifacts': {
-            'report.json': os.path.join(here, 'build', 'upload', 'report.json'),
-            'results.xml': os.path.join(here, 'build', 'upload', 'results.xml')
+            'report.json': os.path.join(here, 'upload', 'report.json'),
+            'results.xml': os.path.join(here, 'upload', 'results.xml')
         },
     },
     'logs': {
