@@ -77,7 +77,7 @@ class S3Bucket(object):
         try:
             key = self.bucket.get_key(destination)
             if not key:
-                print('Creating key: %s' % destination)
+                logger.debug('Creating key: %s' % destination)
                 key = self.bucket.new_key(destination)
 
             ext = os.path.splitext(path)[-1]
@@ -85,26 +85,24 @@ class S3Bucket(object):
                 key.set_metadata('Content-Type', 'text/plain')
 
             with tempfile.NamedTemporaryFile('w+b', suffix=ext) as tf:
-                print('Compressing: %s' % path)
+                logger.debug('Compressing: %s' % path)
                 with gzip.GzipFile(path, 'wb', fileobj=tf) as gz:
                     with open(path, 'rb') as f:
                         gz.writelines(f)
                 tf.flush()
                 tf.seek(0)
                 key.set_metadata('Content-Encoding', 'gzip')
-                print('Setting key contents from: %s' % tf.name)
+                logger.debug('Setting key contents from: %s' % tf.name)
                 key.set_contents_from_file(tf)
 
             url = key.generate_url(expires_in=0,
                                    query_auth=False)
-            print('url')
-            print(url)
 
         except boto.exception.S3ResponseError, e:
-            print(str(e))
+            logger.debug(str(e))
             raise S3Error('%s' % e)
 
-        print('File %s uploaded to: %s' % (path, url))
+        logger.debug('File %s uploaded to: %s' % (path, url))
         return url
 
 if __name__ == '__main__':
@@ -172,7 +170,7 @@ if __name__ == '__main__':
         parser.print_usage()
         sys.exit(1)
 
-    print('bucket %s' % cmd_options.bucket)
+    logger.debug('bucket %s' % cmd_options.bucket)
 
     s3bucket = S3Bucket(cmd_options.bucket)
 

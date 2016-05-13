@@ -282,9 +282,6 @@ def upload_log_files(guid, logs,
                      bucket_name=None, access_key_id=None, access_secret_key=None):
     # Upload all specified logs to Amazon S3
 
-    print("*** LOGS ****")
-    print(logs)
-
     if not bucket_name:
         print('No AWS Bucket name specified - skipping upload of artifacts.')
         return {}
@@ -294,19 +291,12 @@ def upload_log_files(guid, logs,
     uploaded_logs = {}
 
     for log in logs:
-        print("**** Next log: ****")
-        print(log)
         try:
             if os.path.isfile(logs[log]):
-                print("*****")
-                print("found file")
                 remote_path = '{dir}/{filename}'.format(dir=str(guid),
                                                         filename=os.path.basename(log))
-                print('reote_path:')
-                print(remote_path)
+
                 url = s3_bucket.upload(logs[log], remote_path)
-                print("url:")
-                print(url)
 
                 uploaded_logs.update({log: {'path': logs[log], 'url': url}})
                 print('Uploaded {path} to {url}'.format(path=logs[log], url=url))
