@@ -10,10 +10,10 @@ file_name = 'report.json'
 config = {
     'version': '2.0.0',
     'treeherder': {
-        'group_name': 'version-control-tools',
-        'group_symbol': 'VCT',
-        'job_name': 'review board .t tests',
-        'job_symbol': 'rb-t',
+        'group_name': 'mozreview',
+        'group_symbol': 'MR',
+        'job_name': 'reviewboard',
+        'job_symbol': 'rb',
         'artifacts': ['report.json', 'results.xml']
     },
     'logs': {
