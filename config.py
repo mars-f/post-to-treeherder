@@ -8,15 +8,15 @@ here = os.path.dirname(os.path.abspath(__file__))
 file_name = 'report.json'
 
 config = {
-    'version': '1.0.0',
+    'version': '2.0.0',
     'treeherder': {
         'group_name': 'version-control-tools',
         'group_symbol': 'VCT',
-        'job_name': 'reviewboard',
-        'job_symbol': 'rb'
+        'job_name': 'review board .t tests',
+        'job_symbol': 'rb-t',
+        'artifacts': ['report.json', 'results.xml']
     },
     'logs': {
-        'name': file_name,
         'results': os.path.join(here, file_name)
     },
 }
