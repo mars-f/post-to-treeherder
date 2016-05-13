@@ -1,0 +1,326 @@
+testreport ={
+    "test-auth.t": {
+        "csys": "0.160", 
+        "cuser": "0.990", 
+        "diff": "", 
+        "end": "486.990", 
+        "result": "skip", 
+        "start": "347.790", 
+        "time": "139.200"
+    }, 
+    "test-bugzilla-review-flag-cleared.t": {
+        "csys": "1.800", 
+        "cuser": "10.460", 
+        "diff": "", 
+        "end": "307.940", 
+        "result": "success", 
+        "start": "266.090", 
+        "time": "41.850"
+    }, 
+    "test-bugzilla-review-interaction.t": {
+        "csys": "3.860", 
+        "cuser": "16.450", 
+        "diff": "", 
+        "end": "60.590", 
+        "result": "success", 
+        "start": "0.000", 
+        "time": "60.590"
+    }, 
+    "test-bugzilla.t": {
+        "csys": "1.260", 
+        "cuser": "6.110", 
+        "diff": "", 
+        "end": "715.680", 
+        "result": "success", 
+        "start": "686.180", 
+        "time": "29.500"
+    }, 
+    "test-commitid.t": {
+        "csys": "0.300", 
+        "cuser": "1.450", 
+        "diff": "", 
+        "end": "908.670", 
+        "result": "success", 
+        "start": "906.870", 
+        "time": "1.800"
+    }, 
+    "test-commits-added.t": {
+        "csys": "0.700", 
+        "cuser": "3.920", 
+        "diff": "", 
+        "end": "774.670", 
+        "result": "success", 
+        "start": "750.000", 
+        "time": "24.670"
+    }, 
+    "test-commits-deleted-no-obsolescence.t": {
+        "csys": "1.440", 
+        "cuser": "6.290", 
+        "diff": "", 
+        "end": "163.120", 
+        "result": "success", 
+        "start": "130.650", 
+        "time": "32.470"
+    }, 
+    "test-commits-deleted-obsolescence.t": {
+        "csys": "1.590", 
+        "cuser": "8.230", 
+        "diff": "", 
+        "end": "96.200", 
+        "result": "success", 
+        "start": "60.590", 
+        "time": "35.610"
+    }, 
+    "test-diffset-verification.t": {
+        "csys": "0.930", 
+        "cuser": "6.130", 
+        "diff": "", 
+        "end": "1069.680", 
+        "result": "success", 
+        "start": "1043.520", 
+        "time": "26.160"
+    }, 
+    "test-errors.t": {
+        "csys": "0.390", 
+        "cuser": "1.790", 
+        "diff": "", 
+        "end": "750.000", 
+        "result": "success", 
+        "start": "746.570", 
+        "time": "3.430"
+    }, 
+    "test-fetchreviews.t": {
+        "csys": "0.710", 
+        "cuser": "4.000", 
+        "diff": "", 
+        "end": "1093.020", 
+        "result": "success", 
+        "start": "1069.680", 
+        "time": "23.340"
+    }, 
+    "test-folding-obsolescence.t": {
+        "csys": "0.800", 
+        "cuser": "4.160", 
+        "diff": "", 
+        "end": "853.080", 
+        "result": "success", 
+        "start": "828.620", 
+        "time": "24.460"
+    }, 
+    "test-httpd-bugzilla-auth.t": {
+        "csys": "0.410", 
+        "cuser": "1.780", 
+        "diff": "", 
+        "end": "945.650", 
+        "result": "success", 
+        "start": "933.220", 
+        "time": "12.430"
+    }, 
+    "test-ldap-association.t": {
+        "csys": "2.010", 
+        "cuser": "11.380", 
+        "diff": "", 
+        "end": "626.290", 
+        "result": "success", 
+        "start": "586.900", 
+        "time": "39.390"
+    }, 
+    "test-multiple-parents.t": {
+        "csys": "0.580", 
+        "cuser": "3.480", 
+        "diff": "", 
+        "end": "1020.150", 
+        "result": "success", 
+        "start": "997.230", 
+        "time": "22.920"
+    }, 
+    "test-multiple-precursors.t": {
+        "csys": "0.810", 
+        "cuser": "4.310", 
+        "diff": "", 
+        "end": "933.220", 
+        "result": "success", 
+        "start": "908.670", 
+        "time": "24.550"
+    }, 
+    "test-obsolescence.t": {
+        "csys": "0.650", 
+        "cuser": "3.620", 
+        "diff": "", 
+        "end": "997.230", 
+        "result": "success", 
+        "start": "974.210", 
+        "time": "23.020"
+    }, 
+    "test-operation-prevention.t": {
+        "csys": "0.940", 
+        "cuser": "5.110", 
+        "diff": "", 
+        "end": "906.870", 
+        "result": "success", 
+        "start": "880.560", 
+        "time": "26.310"
+    }, 
+    "test-pulse-publishing.t": {
+        "csys": "0.760", 
+        "cuser": "3.940", 
+        "diff": "", 
+        "end": "1043.520", 
+        "result": "success", 
+        "start": "1020.150", 
+        "time": "23.370"
+    }, 
+    "test-push-http.t": {
+        "csys": "1.360", 
+        "cuser": "7.520", 
+        "diff": "--- /var/lib/jenkins/workspace/mozreviewci/hgext/reviewboard/tests/test-push-http.t\n+++ /var/lib/jenkins/workspace/mozreviewci/hgext/reviewboard/tests/test-push-http.t.err\n@@ -80,7 +80,7 @@\n   content-type: text/html; charset=iso-8859-1\n   date: * (glob)\n   server: Apache\n-  www-authenticate: Basic realm=\"http://$DOCKER_HOSTNAME:$HGPORT2/ username and API Key\"\n+  www-authenticate: Basic realm=\"https://bugzilla.mozilla.org/ username and API Key\"\n   \n   <!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n   <html><head>\n@@ -105,7 +105,7 @@\n   content-type: text/html; charset=iso-8859-1\n   date: * (glob)\n   server: Apache\n-  www-authenticate: Basic realm=\"http://$DOCKER_HOSTNAME:$HGPORT2/ username and API Key\"\n+  www-authenticate: Basic realm=\"https://bugzilla.mozilla.org/ username and API Key\"\n   \n   <!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n   <html><head>\n@@ -131,7 +131,7 @@\n   content-type: text/html; charset=iso-8859-1\n   date: * (glob)\n   server: Apache\n-  www-authenticate: Basic realm=\"http://$DOCKER_HOSTNAME:$HGPORT2/ username and API Key\"\n+  www-authenticate: Basic realm=\"https://bugzilla.mozilla.org/ username and API Key\"\n   \n   <!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n   <html><head>\n@@ -150,15 +150,27 @@\n Valid user and API key is authenticated properly\n \n   $ http --method POST --basic-username default@example.com --basic-password ${defaultkey} --request-header \"Content-Type: text/plain\" ${MERCURIAL_URL}test-repo/json-pushes\n-  200\n-  connection: close\n-  content-type: application/json\n-  date: * (glob)\n-  etag: * (glob)\n-  server: Apache\n-  transfer-encoding: chunked\n-  \n-  {\"1\": {\"changesets\": [\"96ee1d7354c4ad7372047672c36a1f561e3a6a4c\"], \"date\": *, \"user\": \"default@example.com\"}} (glob)\n+  401\n+  connection: close\n+  content-length: 401\n+  content-type: text/html; charset=iso-8859-1\n+  date: Mon, 09 May 2016 05:20:52 GMT\n+  server: Apache\n+  www-authenticate: Basic realm=\"https://bugzilla.mozilla.org/ username and API Key\"\n+  \n+  <!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n+  <html><head>\n+  <title>401 Authorization Required</title>\n+  </head><body>\n+  <h1>Authorization Required</h1>\n+  <p>This server could not verify that you\n+  are authorized to access the document\n+  requested.  Either you supplied the wrong\n+  credentials (e.g., bad password), or your\n+  browser doesn't understand how to supply\n+  the credentials required.</p>\n+  </body></html>\n+  \n \n Vanilla push over HTTP should require authorization\n \n@@ -178,7 +190,7 @@\n   pushing to http://$DOCKER_HOSTNAME:$HGPORT/test-repo\n   searching for changes\n   http authorization required for http://$DOCKER_HOSTNAME:$HGPORT/test-repo\n-  realm: http://$DOCKER_HOSTNAME:$HGPORT2/ username and API Key\n+  realm: https://bugzilla.mozilla.org/ username and API Key\n   user: abort: response expected\n   [255]\n \n@@ -191,11 +203,8 @@\n   $ hg --config mozilla.trustedbmoapikeyservices=${MERCURIAL_URL} push ${MERCURIAL_URL}test-repo --noreview -r .\n   pushing to http://$DOCKER_HOSTNAME:$HGPORT/test-repo\n   searching for changes\n-  remote: adding changesets\n-  remote: adding manifests\n-  remote: adding file changes\n-  remote: added 1 changesets with 1 changes to 1 files\n-  remote: recorded push in pushlog\n+  abort: authorization failed\n+  [255]\n \n   $ hg -q up -r 1\n \n@@ -223,11 +232,8 @@\n   $ hg push ${MERCURIAL_URL}test-repo --noreview -r .\n   pushing to http://$DOCKER_HOSTNAME:$HGPORT/test-repo\n   searching for changes\n-  remote: adding changesets\n-  remote: adding manifests\n-  remote: adding file changes\n-  remote: added 1 changesets with 1 changes to 1 files (+1 heads)\n-  remote: recorded push in pushlog\n+  abort: authorization failed\n+  [255]\n \n The Bugzilla user should have been recorded in the pushlog\n \n@@ -242,20 +248,6 @@\n           ],\n           \"date\": *, (glob)\n           \"user\": \"default@example.com\"\n-      },\n-      \"2\": {\n-          \"changesets\": [\n-              \"12ee4d2b76f57e27a8bcacd2063487a6bde7d7fd\"\n-          ],\n-          \"date\": *, (glob)\n-          \"user\": \"bmo:default@example.com\"\n-      },\n-      \"3\": {\n-          \"changesets\": [\n-              \"6ab4007f52489a76cbff3f80e3d7baa5d99fbb3c\"\n-          ],\n-          \"date\": *, (glob)\n-          \"user\": \"bmo:default@example.com\"\n       }\n   }\n \n@@ -277,11 +269,8 @@\n   $ hg push --noreview ${MERCURIAL_URL}test-repo -r .\n   pushing to http://$DOCKER_HOSTNAME:$HGPORT/test-repo\n   searching for changes\n-  remote: adding changesets\n-  remote: adding manifests\n-  remote: adding file changes\n-  remote: added 1 changesets with 1 changes to 1 files\n-  remote: recorded push in pushlog\n+  abort: authorization failed\n+  [255]\n \n   $ http ${MERCURIAL_URL}test-repo/json-pushes --no-headers --body-file body\n   200\n@@ -294,27 +283,6 @@\n           ],\n           \"date\": *, (glob)\n           \"user\": \"default@example.com\"\n-      },\n-      \"2\": {\n-          \"changesets\": [\n-              \"12ee4d2b76f57e27a8bcacd2063487a6bde7d7fd\"\n-          ],\n-          \"date\": *, (glob)\n-          \"user\": \"bmo:default@example.com\"\n-      },\n-      \"3\": {\n-          \"changesets\": [\n-              \"6ab4007f52489a76cbff3f80e3d7baa5d99fbb3c\"\n-          ],\n-          \"date\": *, (glob)\n-          \"user\": \"bmo:default@example.com\"\n-      },\n-      \"4\": {\n-          \"changesets\": [\n-              \"8d7f5c4152d8f67d67500d3b92903e365c0122f1\"\n-          ],\n-          \"date\": *, (glob)\n-          \"user\": \"bmo:user2@example.com\"\n       }\n   }\n \n@@ -334,68 +302,41 @@\n   (adding commit id to 2 changesets)\n   saved backup bundle to $TESTTMP/client/.hg/strip-backup/e528ead97c56-8d25fba9-addcommitid.hg (glob)\n   searching for changes\n-  remote: adding changesets\n-  remote: adding manifests\n-  remote: adding file changes\n-  remote: added 2 changesets with 2 changes to 1 files\n-  remote: recorded push in pushlog\n-  submitting 2 changesets for review\n-  \n-  changeset:  4:9d326020e0dc\n-  summary:    Bug 1 - Review 1; r?reviewer\n-  review:     http://$DOCKER_HOSTNAME:$HGPORT1/r/2 (draft)\n-  \n-  changeset:  5:c6548fe14585\n-  summary:    Bug 1 - Review 2; r?reviewer\n-  review:     http://$DOCKER_HOSTNAME:$HGPORT1/r/3 (draft)\n-  \n-  review id:  bz://1/mynick\n-  review url: http://$DOCKER_HOSTNAME:$HGPORT1/r/1 (draft)\n-  \n-  publish these review requests now (Yn)?  y\n-  (published review request 1)\n+  abort: authorization failed\n+  [255]\n \n   $ rbmanage dumpreview 1\n-  id: 1\n-  status: pending\n-  public: true\n-  bugs:\n-  - '1'\n-  commit: bz://1/mynick\n-  submitter: user2\n-  summary: bz://1/mynick\n-  description: This is the parent review request\n-  target_people:\n-  - reviewer\n-  extra_data:\n-    calculated_trophies: true\n-    p2rb.reviewer_map: '{}'\n-  commit_extra_data:\n-    p2rb: true\n-    p2rb.base_commit: 8d7f5c4152d8f67d67500d3b92903e365c0122f1\n-    p2rb.commits: '[[\"9d326020e0dcd3e421680e4b78bf80c9e30df0e6\", 2], [\"c6548fe145857055779b23d94ef3f911e8d261b0\",\n-      3]]'\n-    p2rb.discard_on_publish_rids: '[]'\n-    p2rb.first_public_ancestor: 8d7f5c4152d8f67d67500d3b92903e365c0122f1\n-    p2rb.identifier: bz://1/mynick\n-    p2rb.is_squashed: true\n-    p2rb.unpublished_rids: '[]'\n-  diffs:\n-  - id: 1\n-    revision: 1\n-    base_commit_id: 8d7f5c4152d8f67d67500d3b92903e365c0122f1\n-    name: diff\n-    extra: {}\n-    patch:\n-    - diff --git a/foo b/foo\n-    - '--- a/foo'\n-    - +++ b/foo\n-    - '@@ -1,1 +1,1 @@'\n-    - -user2\n-    - +review2\n-    - ''\n-  approved: false\n-  approval_failure: Commit 9d326020e0dcd3e421680e4b78bf80c9e30df0e6 is not approved.\n+  Error running mach:\n+  \n+      ['dumpreview', '1']\n+  \n+  The error occurred in code that was called by the mach command. This is either\n+  a bug in the called code itself or in the way that mach is calling it.\n+  \n+  You should consider filing a bug for this issue.\n+  \n+  If filing a bug, please include the full output of mach, including this error\n+  message.\n+  \n+  The details of the failure are as follows:\n+  \n+  APIError: Object does not exist (HTTP 404, API Error 100)\n+  \n+    File \"/var/lib/jenkins/workspace/mozreviewci/testing/vcttesting/reviewboard/mach_commands.py\", line 233, in dumpreview\n+      r = root.get_review_request(review_request_id=rrid)\n+    File \"/var/lib/jenkins/workspace/mozreviewci/venv/local/lib/python2.7/site-packages/rbtools/api/resource.py\", line 472, in <lambda>\n+      self._get_template_request(url, **kwargs)))\n+    File \"/var/lib/jenkins/workspace/mozreviewci/venv/local/lib/python2.7/site-packages/rbtools/api/decorators.py\", line 27, in request_method\n+      *args, **kwargs)\n+    File \"/var/lib/jenkins/workspace/mozreviewci/venv/local/lib/python2.7/site-packages/rbtools/api/transport/sync.py\", line 75, in execute_request_method\n+      return self._execute_request(request)\n+    File \"/var/lib/jenkins/workspace/mozreviewci/venv/local/lib/python2.7/site-packages/rbtools/api/transport/sync.py\", line 84, in _execute_request\n+      rsp = self.server.make_request(request)\n+    File \"/var/lib/jenkins/workspace/mozreviewci/venv/local/lib/python2.7/site-packages/rbtools/api/request.py\", line 587, in make_request\n+      self.process_error(e.code, e.read())\n+    File \"/var/lib/jenkins/workspace/mozreviewci/venv/local/lib/python2.7/site-packages/rbtools/api/request.py\", line 560, in process_error\n+      rsp['err']['msg'])\n+  [1]\n \n   $ rbmanage dump-user user2\n   4:\n", 
+        "end": "524.480", 
+        "result": "failure", 
+        "start": "486.990", 
+        "time": "37.490"
+    }, 
+    "test-push-invalid-bug.t": {
+        "csys": "0.440", 
+        "cuser": "3.240", 
+        "diff": "", 
+        "end": "1155.420", 
+        "result": "success", 
+        "start": "1135.060", 
+        "time": "20.360"
+    }, 
+    "test-push-multiple-bugs.t": {
+        "csys": "0.440", 
+        "cuser": "3.610", 
+        "diff": "", 
+        "end": "1135.060", 
+        "result": "success", 
+        "start": "1114.600", 
+        "time": "20.460"
+    }, 
+    "test-push.t": {
+        "csys": "1.620", 
+        "cuser": "7.530", 
+        "diff": "", 
+        "end": "347.790", 
+        "result": "success", 
+        "start": "307.940", 
+        "time": "39.850"
+    }, 
+    "test-remote-strip.t": {
+        "csys": "0.870", 
+        "cuser": "5.580", 
+        "diff": "", 
+        "end": "800.790", 
+        "result": "success", 
+        "start": "774.670", 
+        "time": "26.120"
+    }, 
+    "test-repo-discovery.t": {
+        "csys": "1.440", 
+        "cuser": "6.810", 
+        "diff": "--- /var/lib/jenkins/workspace/mozreviewci/hgext/reviewboard/tests/test-repo-discovery.t\n+++ /var/lib/jenkins/workspace/mozreviewci/hgext/reviewboard/tests/test-repo-discovery.t.err\n@@ -190,21 +190,8 @@\n   (adding commit id to 1 changesets)\n   saved backup bundle to $TESTTMP/http-redirect/.hg/strip-backup/30e798db0d86-dc510bb5-addcommitid.hg (glob)\n   searching for changes\n-  remote: adding changesets\n-  remote: adding manifests\n-  remote: adding file changes\n-  remote: added 1 changesets with 1 changes to 1 files\n-  remote: recorded push in pushlog\n-  submitting 1 changesets for review\n-  \n-  changeset:  2:e60ac86a2b70\n-  summary:    Bug 1 - Testing discovery via HTTP pushes\n-  review:     http://$DOCKER_HOSTNAME:$HGPORT1/r/2 (draft)\n-  \n-  review id:  bz://1/dummy\n-  review url: http://$DOCKER_HOSTNAME:$HGPORT1/r/1 (draft)\n-  (review requests lack reviewers; visit review url to assign reviewers)\n-  (visit review url to publish these review requests so others can see them)\n+  abort: authorization failed\n+  [255]\n \n Pushing to autoreview repo without client extension results in sane failure\n (Test with both SSH and HTTP because peer handling of errors is\n", 
+        "end": "559.160", 
+        "result": "failure", 
+        "start": "524.480", 
+        "time": "34.680"
+    }, 
+    "test-review-commit-rewrite.t": {
+        "csys": "1.090", 
+        "cuser": "5.720", 
+        "diff": "", 
+        "end": "974.210", 
+        "result": "success", 
+        "start": "945.650", 
+        "time": "28.560"
+    }, 
+    "test-review-request-approval.t": {
+        "csys": "2.810", 
+        "cuser": "16.220", 
+        "diff": "", 
+        "end": "215.360", 
+        "result": "success", 
+        "start": "163.120", 
+        "time": "52.240"
+    }, 
+    "test-review-request-closed-discarded.t": {
+        "csys": "1.810", 
+        "cuser": "8.850", 
+        "diff": "", 
+        "end": "130.650", 
+        "result": "success", 
+        "start": "96.200", 
+        "time": "34.450"
+    }, 
+    "test-review-request-closed-submitted.t": {
+        "csys": "1.090", 
+        "cuser": "6.180", 
+        "diff": "", 
+        "end": "586.900", 
+        "result": "success", 
+        "start": "559.160", 
+        "time": "27.740"
+    }, 
+    "test-review-request-delete-draft.t": {
+        "csys": "1.100", 
+        "cuser": "6.170", 
+        "diff": "", 
+        "end": "655.080", 
+        "result": "success", 
+        "start": "626.300", 
+        "time": "28.780"
+    }, 
+    "test-review-request-summary.t": {
+        "csys": "1.380", 
+        "cuser": "8.270", 
+        "diff": "", 
+        "end": "746.570", 
+        "result": "success", 
+        "start": "715.680", 
+        "time": "30.890"
+    }, 
+    "test-reviewer-flags.t": {
+        "csys": "0.980", 
+        "cuser": "4.590", 
+        "diff": "", 
+        "end": "828.620", 
+        "result": "success", 
+        "start": "800.790", 
+        "time": "27.830"
+    }, 
+    "test-specify-reviewers.t": {
+        "csys": "2.330", 
+        "cuser": "10.870", 
+        "diff": "", 
+        "end": "266.090", 
+        "result": "success", 
+        "start": "215.360", 
+        "time": "50.730"
+    }, 
+    "test-store.t": {
+        "csys": "0.540", 
+        "cuser": "3.450", 
+        "diff": "", 
+        "end": "1114.600", 
+        "result": "success", 
+        "start": "1093.020", 
+        "time": "21.580"
+    }, 
+    "test-unicode.t": {
+        "csys": "1.290", 
+        "cuser": "7.200", 
+        "diff": "", 
+        "end": "686.180", 
+        "result": "success", 
+        "start": "655.080", 
+        "time": "31.100"
+    }, 
+    "test-user-apis.t": {
+        "csys": "1.420", 
+        "cuser": "7.100", 
+        "diff": "", 
+        "end": "880.560", 
+        "result": "success", 
+        "start": "853.080", 
+        "time": "27.480"
+    }
+}
