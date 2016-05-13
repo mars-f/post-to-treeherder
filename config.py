@@ -17,6 +17,7 @@ config = {
         'artifacts': ['report.json', 'results.xml', '*.err']
     },
     'logs': {
+        'name': file_name,
         'results': os.path.join(here, file_name)
     },
 }
