@@ -19,6 +19,6 @@ config = {
         },
     },
     'logs': {
-        'results': os.path.join(here, 'report.json')
+        'results': os.path.join(here, 'upload', 'report.json')
     },
 }
