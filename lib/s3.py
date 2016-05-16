@@ -103,8 +103,11 @@ class S3Bucket(object):
                 logger.debug('Setting key contents from: %s' % tf.name)
                 key.set_contents_from_file(tf)
 
-            #url = key.generate_url(expires_in=0,
-            #                       query_auth=False)
+            url = key.generate_url(expires_in=0,
+                                   query_auth=False)
+
+            print("**** url")
+            print(url)
 
             print("****** host:")
             print(conn.server_name())
@@ -112,6 +115,7 @@ class S3Bucket(object):
             print(self.bucket_name)
             print("***** key:")
             print(key)
+
             url = 'https://{host}/{bucket}/{key}'.format(
                 host=conn.server_name(),
                 bucket=self.bucket_name,
@@ -121,6 +125,8 @@ class S3Bucket(object):
             print(url)
 
         except boto.exception.S3ResponseError, e:
+            print("***** exception")
+            print(str(e))
             logger.debug(str(e))
             raise S3Error('%s' % e)
 
