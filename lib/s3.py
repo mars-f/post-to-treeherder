@@ -94,38 +94,26 @@ class S3Bucket(object):
 
             with tempfile.NamedTemporaryFile('w+b', suffix=ext) as tf:
                 logger.debug('Compressing: %s' % path)
-                print("***** compressing")
                 with gzip.GzipFile(path, 'wb', fileobj=tf) as gz:
                     with open(path, 'rb') as f:
                         gz.writelines(f)
                 tf.flush()
                 tf.seek(0)
                 key.set_metadata('Content-Encoding', 'gzip')
-                print("****** setting contents from file")
                 logger.debug('Setting key contents from: %s' % tf.name)
                 key.set_contents_from_file(tf)
 
-            #url = key.generate_url(expires_in=0,
-            #                       query_auth=False)
+            key.make_public()
 
+            url = key.generate_url(expires_in=0,
+                                   query_auth=False)
 
-            print("****** host:")
-            print(self.host)
-            print("**** bucket:")
-            print(self.bucket_name)
-            print("***** key:")
-            print(key.name)
-
-            url = 'https://{bucket}.{host}/{key}'.format(
-              bucket=self.bucket_name,
-              host=self.host,
-              key=key.name)
-
-            print("***** URL:")
-            print(url)
+            #url = 'https://{bucket}.{host}/{key}'.format(
+            #  bucket=self.bucket_name,
+            #  host=self.host,
+            #  key=key.name)
 
         except boto.exception.S3ResponseError, e:
-            print("***** exception")
             print(str(e))
             logger.debug(str(e))
             raise S3Error('%s' % e)
