@@ -116,10 +116,10 @@ class S3Bucket(object):
             print("***** key:")
             print(key)
 
-            url = 'https://{host}/{bucket}/{key}'.format(
-              host=self.host,
+            url = 'https://{bucket}.{host}/{key}'.format(
               bucket=self.bucket_name,
-              key=key)
+              host=self.host,
+              key=key['Key'])
 
             print("***** URL:")
             print(url)
