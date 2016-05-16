@@ -80,9 +80,9 @@ class S3Bucket(object):
             print(key)
             if not key:
               print("**** creating key")
-                logger.debug('Creating key: %s' % destination)
-                key = self.bucket.new_key(destination)
-                print(key)
+              logger.debug('Creating key: %s' % destination)
+              key = self.bucket.new_key(destination)
+              print(key)
 
             ext = os.path.splitext(path)[-1]
             print("**** ext:")
@@ -119,7 +119,7 @@ class S3Bucket(object):
 
             print("***** URL:")
             print(url)
-  
+
         except boto.exception.S3ResponseError, e:
             logger.debug(str(e))
             raise S3Error('%s' % e)
