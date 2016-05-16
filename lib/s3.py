@@ -98,8 +98,8 @@ class S3Bucket(object):
             #url = key.generate_url(expires_in=0,
             #                       query_auth=False)
 
-            url = key.generate_url(expires_in=0,
-                                   query_auth=True)
+            url = key.generate_url(expires_in=300,
+                                   query_auth=False)
 
         except boto.exception.S3ResponseError, e:
             logger.debug(str(e))
