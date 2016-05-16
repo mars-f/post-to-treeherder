@@ -35,6 +35,7 @@ class S3Bucket(object):
         self.bucket_name = bucket_name
         self.access_key_id = access_key_id
         self.access_secret_key = access_secret_key
+        self.host = None
 
     @property
     def bucket(self):
@@ -47,6 +48,7 @@ class S3Bucket(object):
                 raise S3Error('bucket %s not found' % self.bucket_name)
             if not self._bucket:
                 self._bucket = conn.get_bucket(self.bucket_name)
+                self.host = conn.server_name()
             return self._bucket
         except boto.exception.NoAuthHandlerFound:
             logger.exception()
@@ -103,21 +105,19 @@ class S3Bucket(object):
                 logger.debug('Setting key contents from: %s' % tf.name)
                 key.set_contents_from_file(tf)
 
-            url = key.generate_url(expires_in=0,
-                                   query_auth=False)
+            #url = key.generate_url(expires_in=0,
+            #                       query_auth=False)
 
-            print("**** url")
-            print(url)
 
             print("****** host:")
-            print(conn.server_name())
+            print(self.host)
             print("**** bucket:")
             print(self.bucket_name)
             print("***** key:")
             print(key)
 
             url = 'https://{host}/{bucket}/{key}'.format(
-                host=conn.server_name(),
+                host=self.host),
                 bucket=self.bucket_name,
                 key=key)
 
