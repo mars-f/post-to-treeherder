@@ -78,17 +78,11 @@ class S3Bucket(object):
     def upload(self, path, destination):
         try:
             key = self.bucket.get_key(destination)
-            print("**** key")
-            print(key)
             if not key:
-              print("**** creating key")
               logger.debug('Creating key: %s' % destination)
               key = self.bucket.new_key(destination)
-              print(key)
 
             ext = os.path.splitext(path)[-1]
-            print("**** ext:")
-            print(ext)
             if ext == '.log' or ext == '.txt':
                 key.set_metadata('Content-Type', 'text/plain')
 
