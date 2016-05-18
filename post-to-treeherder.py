@@ -40,6 +40,7 @@ class TestResultParser(object):
         self.retval = retval
         self.log_file = log_file
         self.failures = []
+        self.skips = []
         self.result_line = []
         self.parse_results()
 
@@ -86,6 +87,7 @@ class TestResultParser(object):
                 self.failures.append(test_result)
             elif result == 'skip':
                 skipped += 1
+                self.skips.append(test_result)
             else:
                 other += 1
 
@@ -106,7 +108,7 @@ class TestResultParser(object):
         elif not self.failures:
             status = self.SUCCESS
 
-        elif self.failures:
+        elif self.failures or self.skips:
             status = self.TESTFAILED
 
         return status
