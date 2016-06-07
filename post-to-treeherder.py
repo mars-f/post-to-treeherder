@@ -110,7 +110,7 @@ class TestResultParser(object):
                     print("\n* PASSED *")
                     for test in self.passes:
                         f.write("\n%s: passed" %test)
-                        print("%s: passed" %test)
+                        print("\n%s: passed" %test)
                 if self.failures:
                     f.write("\n\n* FAILED *")
                     print("\n\n* FAILED *")
