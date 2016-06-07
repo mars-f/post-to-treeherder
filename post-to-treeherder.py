@@ -101,7 +101,7 @@ class TestResultParser(object):
         print("PASSED: %s, FAILED: %s, SKIPPED: %s, TOTAL: %s" %(passed, failed, skipped, total))
 
         try:
-            results_summary = config['treeherder']['artifacts']['results']
+            results_summary = config['treeherder']['artifacts']['results.txt']
 
             with file(results_summary, 'w') as f:
                 f.write("PASSED: %s, FAILED: %s, SKIPPED: %s, TOTAL: %s\n" %(passed, failed, skipped, total))
@@ -110,7 +110,7 @@ class TestResultParser(object):
                     print("\n* PASSED *")
                     for test in self.passes:
                         f.write("\n%s: passed" %test)
-                        print("\n%s: passed" %test)
+                        print("%s: passed" %test)
                 if self.failures:
                     f.write("\n\n* FAILED *")
                     print("\n\n* FAILED *")
@@ -127,7 +127,7 @@ class TestResultParser(object):
 
         except Exception as e:
             print(str(e))
-            print("Failed to write " + results_summary)
+            print("Failed to write %s" %results_summary)
 
     @property
     def status(self):
