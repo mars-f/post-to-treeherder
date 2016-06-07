@@ -98,26 +98,31 @@ class TestResultParser(object):
             self.retval = 1
             return
 
-        print("Passed: %s, Failed: %s, Skipped: %s, Total: %s" %(passed, failed, skipped, total))
+        print("PASSED: %s, FAILED: %s, SKIPPED: %s, TOTAL: %s" %(passed, failed, skipped, total))
 
         try:
-
             results_summary = config['treeherder']['artifacts']['results']
 
             with file(results_summary, 'w') as f:
                 f.write("PASSED: %s, FAILED: %s, SKIPPED: %s, TOTAL: %s\n" %(passed, failed, skipped, total))
                 if self.passes:
                     f.write("\n* PASSED *")
+                    print("\n* PASSED *")
                     for test in self.passes:
                         f.write("\n%s: passed" %test)
+                        print("\n%s: passed" %test)
                 if self.failures:
                     f.write("\n\n* FAILED *")
+                    print("\n\n* FAILED *")
                     for test in self.failures:
                         f.write("\n%s: failed" %test)
+                        print("\n%s: failed" %test)
                 if self.skips:
                     f.write("\n\n* SKIPPED *")
+                    print("\n\n* SKIPPED *")
                     for test in self.skips:
                         f.write("\n%s: skipped" %test)
+                        print("\n%s: skipped" %test)
                 print("Results summary written to %s" %results_summary)
 
         except Exception as e:
