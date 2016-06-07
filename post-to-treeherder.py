@@ -39,6 +39,7 @@ class TestResultParser(object):
     def __init__(self, retval, log_file):
         self.retval = retval
         self.log_file = log_file
+        self.passes = []
         self.failures = []
         self.skips = []
         self.result_line = []
@@ -82,6 +83,7 @@ class TestResultParser(object):
             result = results_json[test_result]['result']
             if result == 'success':
                 passed += 1
+                self.passes.append(test_result)
             elif result == 'failure':
                 failed += 1
                 self.failures.append(test_result)
@@ -96,7 +98,31 @@ class TestResultParser(object):
             self.retval = 1
             return
 
-        print("Total: %s, Pass: %s, Failed: %s, Skip: %s" %(total, passed, failed, skipped))
+        print("Passed: %s, Failed: %s, Skipped: %s, Total: %s" %(passed, failed, skipped, total))
+
+        try:
+
+            results_summary = config['treeherder']['artifacts']['results']
+
+            with file(results_summary, 'w') as f:
+                f.write("PASSED: %s, FAILED: %s, SKIPPED: %s, TOTAL: %s\n" %(passed, failed, skipped, total))
+                if self.passes:
+                    f.write("\n* PASSED *")
+                    for test in self.passes:
+                        f.write("\n%s: passed" %test)
+                if self.failures:
+                    f.write("\n\n* FAILED *")
+                    for test in self.failures:
+                        f.write("\n%s: failed" %test)
+                if self.skips:
+                    f.write("\n\n* SKIPPED *")
+                    for test in self.skips:
+                        f.write("\n%s: skipped" %test)
+                print("Results summary written to %s" %results_summary)
+
+        except Exception as e:
+            print(str(e))
+            print("Failed to write " + results_summary)
 
     @property
     def status(self):
@@ -303,8 +329,8 @@ def upload_log_files(guid, logs,
                 uploaded_logs.update({log: {'path': logs[log], 'url': url}})
                 print('Uploaded {path} to {url}'.format(path=logs[log], url=url))
 
-        except Exception:
-            print(Exception)
+        except Exception as e:
+            print(str(e))
             print('Failure uploading "{path}" to S3'.format(path=logs[log]))
 
     return uploaded_logs

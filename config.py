@@ -14,6 +14,7 @@ config = {
         'job_name': 'reviewboard',
         'job_symbol': 'rb',
         'artifacts': {
+            'results': os.path.join(here, 'upload', 'results.txt'),
             'report.json': os.path.join(here, 'upload', 'report.json'),
             'create-test-env.log': os.path.join(here, 'upload', 'create-test-env.log'),
             'failed-tests-diffs.log': os.path.join(here, 'upload', 'failed-tests-diffs.log')
