@@ -107,22 +107,22 @@ class TestResultParser(object):
                 f.write("PASSED: %s, FAILED: %s, SKIPPED: %s, TOTAL: %s\n" %(passed, failed, skipped, total))
                 if self.passes:
                     f.write("\n* PASSED *")
-                    print("\n* PASSED *")
+                    print("* PASSED *")
                     for test in self.passes:
                         f.write("\n%s: passed" %test)
-                        print("\n%s: passed" %test)
+                        print("%s: passed" %test)
                 if self.failures:
                     f.write("\n\n* FAILED *")
-                    print("\n\n* FAILED *")
+                    print("* FAILED *")
                     for test in self.failures:
                         f.write("\n%s: failed" %test)
-                        print("\n%s: failed" %test)
+                        print("%s: failed" %test)
                 if self.skips:
                     f.write("\n\n* SKIPPED *")
-                    print("\n\n* SKIPPED *")
+                    print("* SKIPPED *")
                     for test in self.skips:
                         f.write("\n%s: skipped" %test)
-                        print("\n%s: skipped" %test)
+                        print("%s: skipped" %test)
                 print("Results summary written to %s" %results_summary)
 
         except Exception as e:
@@ -279,12 +279,12 @@ class Submission(object):
         job.add_state('running')
         self.submit(job)
 
-    def submit_completed_job(self, job, retval, uploaded_logs):
+    def submit_completed_job(self, job, retval, parser, uploaded_logs):
         """Update the status of a job to completed.
         """
 
         # Parse results log
-        parser = TestResultParser(retval, self.settings['logs']['results'].format(**kwargs))
+        #parser = TestResultParser(retval, self.settings['logs']['results'].format(**kwargs))
         job.add_result(parser.status)
 
         # If the Jenkins BUILD_URL environment variable is present add it as artifact
@@ -431,8 +431,11 @@ if __name__ == '__main__':
                 retval = 1
 
         job = th.create_job(job_guid, **kwargs)
+
+        parser = TestResultParser(retval, config['logs']['results'].format(**kwargs))
+
         uploaded_logs = upload_log_files(job.data['job']['job_guid'],
                                          config['treeherder']['artifacts'],
                                          bucket_name=kwargs.get('aws_bucket'))
 
-        th.submit_completed_job(job, retval, uploaded_logs=uploaded_logs)
+        th.submit_completed_job(job, retval, parser, uploaded_logs=uploaded_logs)
