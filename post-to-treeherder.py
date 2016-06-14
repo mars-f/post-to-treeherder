@@ -155,8 +155,9 @@ class TestResultParser(object):
 
 class Submission(object):
 
-    def __init__(self, repository, revision, settings, start_time, finish_time, 
+    def __init__(self, repository, test_suite, revision, settings, start_time, finish_time,
                  test_busted=0, treeherder_url=None, treeherder_client_id=None, treeherder_secret=None):
+        self.test_suite = test_suite
         self.repository = repository
         self.revision = revision
         self.start_time = start_time
@@ -221,8 +222,8 @@ class Submission(object):
         job.add_group_symbol(self.settings['treeherder']['group_symbol'].format(**kwargs))
 
         # Bug 1174973 - for now we need unique job names even in different groups
-        job.add_job_name(self.settings['treeherder']['job_name'].format(**kwargs))
-        job.add_job_symbol(self.settings['treeherder']['job_symbol'].format(**kwargs))
+        job.add_job_name(self.settings['treeherder'][self.test_suite]['job_name'].format(**kwargs))
+        job.add_job_symbol(self.settings['treeherder'][self.test_suite]['job_symbol'].format(**kwargs))
 
         # request time and start time same is fine
         job.add_submit_timestamp(int(self.start_time))
@@ -343,6 +344,9 @@ def upload_log_files(guid, logs,
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--test-suite',
+                        required=True,
+                        help="The test suite that is running ('rb' or 'nd').")
     parser.add_argument('--start-time',
                         required=True,
                         help='The time (epoch) that the test started at.')
@@ -398,6 +402,7 @@ if __name__ == '__main__':
     from thclient import TreeherderClient, TreeherderJob, TreeherderJobCollection
 
     th = Submission(kwargs['repository'],
+                    test_suite=kwargs['test_suite'],
                     treeherder_url=kwargs['treeherder_url'],
                     treeherder_client_id=kwargs['treeherder_client_id'],
                     treeherder_secret=kwargs['treeherder_secret'],

@@ -11,8 +11,14 @@ config = {
     'treeherder': {
         'group_name': 'MozReview',
         'group_symbol': 'MR',
-        'job_name': 'reviewboard',
-        'job_symbol': 'rb',
+        'rb': {
+            'job_name': 'reviewboard',
+            'job_symbol': 'rb',
+        },
+        'nd': {
+            'job_name': 'no-docker',
+            'job_symbol': 'nd',
+        },
         'artifacts': {
             'results.txt': os.path.join(here, 'upload', 'results.txt'),
             'report.json': os.path.join(here, 'upload', 'report.json'),
