@@ -139,7 +139,7 @@ class TestResultParser(object):
         elif not self.failures:
             status = self.SUCCESS
 
-        elif self.failures or self.skips:
+        elif self.failures:
             status = self.TESTFAILED
 
         return status
