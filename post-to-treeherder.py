@@ -140,7 +140,7 @@ class TestResultParser(object):
         elif self.failures:
             status = self.TESTFAILED
 
-        elif self.suite != 'nd' and self.skips:
+        elif self.test_suite != 'nd' and self.skips:
             status = self.TESTFAILED
 
         else:
