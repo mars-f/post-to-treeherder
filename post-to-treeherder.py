@@ -36,7 +36,8 @@ class TestResultParser(object):
     TESTFAILED = 'testfailed'
     UNKNOWN = 'unknown'
 
-    def __init__(self, retval, log_file):
+    def __init__(self, test_suite, retval, log_file):
+        self.test_suite = test_suite
         self.retval = retval
         self.log_file = log_file
         self.passes = []
@@ -136,11 +137,14 @@ class TestResultParser(object):
         if self.retval is None or (self.retval and not self.failures):
             status = self.BUSTED
 
-        elif not self.failures:
-            status = self.SUCCESS
-
         elif self.failures:
             status = self.TESTFAILED
+
+        elif self.suite != 'nd' and self.skips:
+            status = self.TESTFAILED
+
+        else:
+            status = self.SUCCESS
 
         return status
 
@@ -283,9 +287,6 @@ class Submission(object):
     def submit_completed_job(self, job, retval, parser, uploaded_logs):
         """Update the status of a job to completed.
         """
-
-        # Parse results log
-        #parser = TestResultParser(retval, self.settings['logs']['results'].format(**kwargs))
         job.add_result(parser.status)
 
         # If the Jenkins BUILD_URL environment variable is present add it as artifact
@@ -437,7 +438,7 @@ if __name__ == '__main__':
 
         job = th.create_job(job_guid, **kwargs)
 
-        parser = TestResultParser(retval, config['logs']['results'].format(**kwargs))
+        parser = TestResultParser(th.test_suite, retval, config['logs']['results'].format(**kwargs))
 
         uploaded_logs = upload_log_files(job.data['job']['job_guid'],
                                          config['treeherder']['artifacts'],
